@@ -98,7 +98,8 @@ private:
 
     uint8_t   _hidReportId;
     uint8_t   _hidReportSize; 
-
+    int32_t   _reportFailCount = 0;
+    
 	USBHID HID;
 
 protected:
@@ -108,6 +109,7 @@ protected:
 
 public:
 	uint8_t *customHidReportDescriptor;
+    bool      _usbDeviceStatus = false;
 	int hidReportDescriptorSize;
 
     Joystick_(
