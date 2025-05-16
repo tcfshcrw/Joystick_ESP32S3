@@ -28,10 +28,9 @@
 #include <Arduino.h>
 #include "USB.h"
 #include "USBHID.h"
-#include "Adafruit_TinyUSB.h"
 
-extern SemaphoreHandle_t tinyusb_hid_device_input_sem;
-extern SemaphoreHandle_t tinyusb_hid_device_input_mutex;
+
+
 //================================================================================
 //  Joystick (Gamepad)
 
@@ -133,8 +132,6 @@ public:
     void begin(bool initAutoSendState = true, uint8_t interval_ms = 2);
 	
 	void end();
-
-    void hiddeinit();
     
     // Set Range Functions
     inline void setXAxisRange(int32_t minimum, int32_t maximum)
