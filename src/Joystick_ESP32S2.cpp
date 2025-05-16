@@ -716,3 +716,21 @@ void Joystick_::sendState()
 	}
 
 }
+
+void Joystick_::hiddeinit()
+{
+
+	// 1. Detach USB device
+  	TinyUSBDevice.detach(); 
+
+	// 2. clear semaphore
+	if (tinyusb_hid_device_input_sem != NULL) {
+		vSemaphoreDelete(tinyusb_hid_device_input_sem);
+		tinyusb_hid_device_input_sem = NULL;
+	}
+	if (tinyusb_hid_device_input_mutex != NULL) {
+		vSemaphoreDelete(tinyusb_hid_device_input_mutex);
+		tinyusb_hid_device_input_mutex = NULL;
+	}
+}
+
