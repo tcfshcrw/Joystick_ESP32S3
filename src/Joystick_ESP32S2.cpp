@@ -486,12 +486,13 @@ Joystick_::Joystick_(
   }
 
 
-void Joystick_::begin(bool initAutoSendState, uint8_t intervalMs)
+void Joystick_::begin(bool initAutoSendState, uint32_t intervalMs_u32)
 {
 	HID.begin();
 	_autoSendState = initAutoSendState;
 	sendState();
 	_usbDeviceStatus=true;
+	_intervalMs_u32 = intervalMs_u32;
 }
 
 void Joystick_::end()
@@ -700,7 +701,7 @@ void Joystick_::sendState()
 
 
 	if (HID.ready()) {
-		bool success=HID.SendReport(_hidReportId, data, sizeof(data),2);
+		bool success=HID.SendReport(_hidReportId, data, sizeof(data), _intervalMs_u32);
 		if (!success) 
 		{
 			_reportFailCount++;

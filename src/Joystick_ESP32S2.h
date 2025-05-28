@@ -111,6 +111,7 @@ public:
 	uint8_t *customHidReportDescriptor;
     bool      _usbDeviceStatus = false;
 	int hidReportDescriptorSize;
+    uint32_t _intervalMs_u32 = 10;
 
     Joystick_(
         uint8_t hidReportId = JOYSTICK_DEFAULT_REPORT_ID,
@@ -129,7 +130,7 @@ public:
         bool includeBrake = true,
         bool includeSteering = true);
 
-    void begin(bool initAutoSendState = true, uint8_t interval_ms = 2);
+    void begin(bool initAutoSendState = true, uint32_t intervalMs_u32 = 10);
 	
 	void end();
     
