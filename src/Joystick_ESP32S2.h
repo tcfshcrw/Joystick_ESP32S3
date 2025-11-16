@@ -47,27 +47,6 @@
 #define JOYSTICK_TYPE_JOYSTICK             0x04
 #define JOYSTICK_TYPE_GAMEPAD              0x05
 #define JOYSTICK_TYPE_MULTI_AXIS           0x08
-uint8_t const desc_hid_report[] = {
-    0x05, 0x01, // Usage Page (Generic Desktop Ctrls)
-    0x09, 0x04, // Usage (Joystick)
-    0xA1, 0x01, // Collection (Application)
-
-    // Define six 16-bit axes (X, Y, Z, Rx, Ry, Rz)
-    0x05, 0x01,       //   Usage Page (Generic Desktop Ctrls)
-    0x09, 0x30,       //   Usage (X)
-    0x09, 0x31,       //   Usage (Y)
-    0x09, 0x32,       //   Usage (Z)
-    0x09, 0x33,       //   Usage (Rx)
-    0x09, 0x34,       //   Usage (Ry)
-    0x09, 0x35,       //   Usage (Rz)
-    0x16, 0x00, 0x80, //   Logical Minimum (-32768)
-    0x26, 0xFF, 0x7F, //   Logical Maximum (32767)
-    0x75, 0x10,       //   Report Size (16)
-    0x95, 0x06,       //   Report Count (6) 
-    0x81, 0x02,       //   Input (Data,Var,Abs)
-
-    0xC0, // End Collection
-};
 class Joystick_ 
 {
 private:
