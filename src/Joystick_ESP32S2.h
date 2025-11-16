@@ -26,8 +26,9 @@
 
 #include <stdint.h>
 #include <Arduino.h>
-#include "USB.h"
-#include "USBHID.h"
+//#include "USB.h"
+//#include "USBHID.h"
+#include "Adafruit_TinyUSB.h"
 
 
 
@@ -46,8 +47,28 @@
 #define JOYSTICK_TYPE_JOYSTICK             0x04
 #define JOYSTICK_TYPE_GAMEPAD              0x05
 #define JOYSTICK_TYPE_MULTI_AXIS           0x08
+uint8_t const desc_hid_report[] = {
+    0x05, 0x01, // Usage Page (Generic Desktop Ctrls)
+    0x09, 0x04, // Usage (Joystick)
+    0xA1, 0x01, // Collection (Application)
 
-class Joystick_: public USBHIDDevice 
+    // Define six 16-bit axes (X, Y, Z, Rx, Ry, Rz)
+    0x05, 0x01,       //   Usage Page (Generic Desktop Ctrls)
+    0x09, 0x30,       //   Usage (X)
+    0x09, 0x31,       //   Usage (Y)
+    0x09, 0x32,       //   Usage (Z)
+    0x09, 0x33,       //   Usage (Rx)
+    0x09, 0x34,       //   Usage (Ry)
+    0x09, 0x35,       //   Usage (Rz)
+    0x16, 0x00, 0x80, //   Logical Minimum (-32768)
+    0x26, 0xFF, 0x7F, //   Logical Maximum (32767)
+    0x75, 0x10,       //   Report Size (16)
+    0x95, 0x06,       //   Report Count (6) 
+    0x81, 0x02,       //   Input (Data,Var,Abs)
+
+    0xC0, // End Collection
+};
+class Joystick_ 
 {
 private:
 
@@ -100,7 +121,7 @@ private:
     uint8_t   _hidReportSize; 
     int32_t   _reportFailCount = 0;
     
-	USBHID HID;
+	Adafruit_USBD_HID HID;
 
 protected:
     int buildAndSet16BitValue(bool includeValue, int32_t value, int32_t valueMinimum, int32_t valueMaximum, int32_t actualMinimum, int32_t actualMaximum, uint8_t dataLocation[]);
@@ -214,6 +235,8 @@ public:
     void setHatSwitch(int8_t hatSwitch, int16_t value);
 
     void sendState();
+    void setVidPidProductVendorDescriptor(int vid, int pid, const char *ProductString, const char *VendorString);
+    bool IsReady();
 	uint16_t _onGetDescriptor(uint8_t* buffer);
 };
 

@@ -105,8 +105,7 @@ Joystick_::Joystick_(
 		
     uint8_t tempHidReportDescriptor[150];
     hidReportDescriptorSize = 0;
-
-    // USAGE_PAGE (Generic Desktop)
+	// USAGE_PAGE (Generic Desktop)
     tempHidReportDescriptor[hidReportDescriptorSize++] = 0x05;
     tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
 
@@ -439,7 +438,8 @@ Joystick_::Joystick_(
 	memcpy(customHidReportDescriptor, tempHidReportDescriptor, hidReportDescriptorSize);
 	
 	// Register HID Report Description
-	HID.addDevice(this, hidReportDescriptorSize);
+	//HID.addDevice(this, hidReportDescriptorSize);
+
     // Setup Joystick State
 	if (buttonCount > 0) {
 		_buttonValuesArraySize = _buttonCount / 8;
@@ -488,16 +488,30 @@ Joystick_::Joystick_(
 
 void Joystick_::begin(bool initAutoSendState, uint32_t intervalMs_u32)
 {
+	if (!TinyUSBDevice.isInitialized())
+    {
+        TinyUSBDevice.begin(0);
+    }
+	HID.setPollInterval(8); // time in ms
+    HID.setReportDescriptor(customHidReportDescriptor, hidReportDescriptorSize);
+	//HID.setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
 	HID.begin();
 	_autoSendState = initAutoSendState;
-	sendState();
+	//sendState();
 	_usbDeviceStatus=true;
 	_intervalMs_u32 = intervalMs_u32;
+	// If already enumerated, additional class driverr begin() e.g msc, hid, midi won't take effect until re-enumeration
+    if (TinyUSBDevice.mounted())
+    {
+        TinyUSBDevice.detach();
+        delay(10);
+        TinyUSBDevice.attach();
+    }
 }
 
 void Joystick_::end()
 {
-	HID.end();
+	
 }
 void Joystick_::setButtons32(uint32_t states) {
 
@@ -701,7 +715,8 @@ void Joystick_::sendState()
 
 
 	if (HID.ready()) {
-		bool success=HID.SendReport(_hidReportId, data, sizeof(data), _intervalMs_u32);
+		//bool success=HID.SendReport(_hidReportId, data, sizeof(data), _intervalMs_u32);
+		bool success= HID.sendReport(_hidReportId, &data, sizeof(data));
 		if (!success) 
 		{
 			_reportFailCount++;
@@ -716,4 +731,24 @@ void Joystick_::sendState()
 		}
 	}
 
+}
+void Joystick_::setVidPidProductVendorDescriptor(int vid, int pid, const char *ProductString, const char *VendorString)
+{
+	TinyUSBDevice.setID(vid, pid);
+    TinyUSBDevice.setProductDescriptor(ProductString);
+    TinyUSBDevice.setManufacturerDescriptor(VendorString);
+}
+bool Joystick_::IsReady()
+{
+    bool returnValue_b = true;
+    if (!TinyUSBDevice.mounted())
+    {
+        returnValue_b = false;
+    }
+    if (!HID.ready())
+    {
+        returnValue_b = false;
+    }
+
+    return returnValue_b;
 }
